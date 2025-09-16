@@ -1,6 +1,6 @@
 import { Calendar, MapPin, User, Users } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { Card, CardContent } from './ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface EventCardProps {
   title: string
