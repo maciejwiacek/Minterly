@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import NavBar from '@/components/navbar'
 import { ClerkProvider } from '@clerk/nextjs'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { QueryProvider } from '@/lib/providers/query-provider'
 
 const geistSans = Geist({

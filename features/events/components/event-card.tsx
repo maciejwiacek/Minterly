@@ -1,31 +1,24 @@
 import { Calendar, MapPin, User, Users } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
+import { Event } from '../types/event'
 
 interface EventCardProps {
-  title: string
-  description?: string
-  location: string
-  date: string
-  organizer: string
-  spotsTaken: number
-  totalSpots: number
-  category: string
-  imageUrl?: string
+  event: Event
 }
 
-function EventCard({
-  title,
-  description,
-  location,
-  date,
-  organizer,
-  spotsTaken,
-  totalSpots,
-  category,
-  imageUrl,
-}: EventCardProps) {
-  const spotsRemaining = totalSpots - spotsTaken
+function EventCard({ event }: EventCardProps) {
+  // Calculate spots remaining (assuming no attendees table for now)
+  const spotsRemaining = event.max_attendees - 0 // TODO: Calculate actual spots taken
+
+  // Format the date
+  const formattedDate = new Date(event.start_date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 
   return (
     <Card className='w-full bg-card/30 backdrop-blur-sm border border-white/10 hover:border-white/20 transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/10'>
@@ -34,13 +27,9 @@ function EventCard({
           {/* Left side - Large circular image */}
           <div className='flex-shrink-0 relative'>
             <Avatar className='w-40 h-40 ring-2 ring-white/10 ring-offset-4 ring-offset-background'>
-              <AvatarImage
-                src={imageUrl}
-                alt={title}
-                className='object-cover'
-              />
+              <AvatarImage src={''} alt={event.name} className='object-cover' />
               <AvatarFallback className='text-5xl font-light bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 text-white'>
-                {title.charAt(0)}
+                {event.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
             {/* Subtle glow effect */}
@@ -53,17 +42,17 @@ function EventCard({
             <div className='space-y-4'>
               <div className='inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20'>
                 <span className='text-sm font-medium text-cyan-400 uppercase tracking-wider'>
-                  {category}
+                  Event
                 </span>
               </div>
 
               <h2 className='text-4xl font-light text-foreground leading-tight tracking-tight'>
-                {title}
+                {event.name}
               </h2>
 
-              {description && (
+              {event.description && (
                 <p className='text-muted-foreground/80 text-lg leading-relaxed max-w-2xl'>
-                  {description}
+                  {event.description}
                 </p>
               )}
             </div>
@@ -77,7 +66,9 @@ function EventCard({
                   <span className='text-xs text-muted-foreground uppercase tracking-wide block'>
                     Date
                   </span>
-                  <span className='text-foreground font-light'>{date}</span>
+                  <span className='text-foreground font-light'>
+                    {formattedDate}
+                  </span>
                 </div>
               </div>
 
@@ -88,7 +79,9 @@ function EventCard({
                   <span className='text-xs text-muted-foreground uppercase tracking-wide block'>
                     Location
                   </span>
-                  <span className='text-foreground font-light'>{location}</span>
+                  <span className='text-foreground font-light'>
+                    {event.user_id || 'No location provided'}
+                  </span>
                 </div>
               </div>
 
@@ -100,7 +93,7 @@ function EventCard({
                     Organizer
                   </span>
                   <span className='text-foreground font-light'>
-                    {organizer}
+                    {event.user_id || 'No organizer provided'}
                   </span>
                 </div>
               </div>

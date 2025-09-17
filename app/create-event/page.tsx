@@ -34,6 +34,8 @@ import {
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { useInsertEvent } from '@/features/events/hooks/eventHooks'
+import { useRouter } from 'next/navigation'
 
 // Zod validation schema
 const formSchema = z
@@ -89,6 +91,8 @@ function CreateEvent() {
   const [eventImage, setEventImage] = useState<string | null>(null)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const insertEventMutation = useInsertEvent()
+  const router = useRouter()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -152,14 +156,22 @@ function CreateEvent() {
     }
   }
 
-  const onSubmit = (values: FormValues) => {
-    const eventData = {
-      ...values,
-      eventImage,
-    }
+  const onSubmit = async (values: FormValues) => {
+    try {
+      const eventData = {
+        name: values.name,
+        description: values.description,
+        start_date: values.startDateTime?.toISOString() || '',
+        max_attendees: values.maxAttendees
+          ? parseInt(values.maxAttendees)
+          : 100,
+      }
 
-    console.log('Event Data:', eventData)
-    // Handle form submission
+      await insertEventMutation.mutateAsync(eventData)
+      router.push('/events')
+    } catch (error) {
+      console.error('Error creating event:', error)
+    }
   }
 
   return (
@@ -506,9 +518,12 @@ function CreateEvent() {
             <div className='flex justify-center pt-8'>
               <Button
                 type='submit'
-                className='bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white border-none px-12 py-6 text-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/25'
+                disabled={insertEventMutation.isPending}
+                className='bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-white border-none px-12 py-6 text-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed'
               >
-                Create Event
+                {insertEventMutation.isPending
+                  ? 'Creating Event...'
+                  : 'Create Event'}
               </Button>
             </div>
           </form>

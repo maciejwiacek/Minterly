@@ -21,24 +21,7 @@ function Events() {
 
       <div className='space-y-8'>
         {events && events.length > 0 ? (
-          events.map((event) => (
-            <EventCard
-              key={event.id}
-              title={event.name}
-              description={event.description}
-              location={event.location}
-              date={new Date(event.start_date).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-              organizer={event.organizer}
-              spotsTaken={0}
-              totalSpots={event.max_attendees}
-              category={'Testing'}
-              imageUrl={event.image_url}
-            />
-          ))
+          events.map((event) => <EventCard key={event.id} event={event} />)
         ) : (
           <div>No events found.</div>
         )}
